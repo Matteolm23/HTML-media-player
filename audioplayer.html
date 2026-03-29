@@ -208,9 +208,9 @@
                 ydir = e.changedTouches[0].clientY - tsy;
 
                 if(xdir < -150)
-                    goback()
-                else if(xdir > 150)
                     goforward()
+                else if(xdir > 150)
+                    goback()
                 else if (xdir > -11 && xdir < 11 && ydir > -11 && ydir < 11)
                     pausesong()
             })
