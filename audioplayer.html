@@ -22,10 +22,12 @@
 
                 pindex = -1
                 playlist = []
-
+                allowed = /(\.ogg|\.mp3|\.wav)$/i;
+                
                 for(let i = 0; i < target.files.length; i++)
                 {
-                    playlist.push(target.files[i])
+                    if(allowed.exec(target.files[i].name))
+                        playlist.push(target.files[i])
                 }
 
                 shuffle(playlist)
