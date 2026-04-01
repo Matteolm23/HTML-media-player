@@ -23,7 +23,7 @@
                 pindex = -1
                 playlist = []
                 allowed = /(\.ogg|\.mp3|\.wav)$/i;
-                
+
                 for(let i = 0; i < target.files.length; i++)
                 {
                     if(allowed.exec(target.files[i].name))
@@ -74,16 +74,25 @@
 
                     songinfo.style.color = "aliceblue"
 
+                    //custom progress bar
+                    //progressbar = Object.assign(document.createElement("input"), { className: "slider" })
+                    
                     //progressbar with progress tag
                     progressbardiv = document.createElement("div")
-                    progressbar = document.createElement("progress")
+                    progressbar = document.createElement("input")
                     progressbar.value = 0
                     progressbar.max = audio.duration
+                    progressbar.min = 0
                     progressbar.style.width = "75%"
                     progressbar.style.height = "2rem"
                     progressbar.style.position = "absolute"
                     progressbar.style.bottom = "15%"
-
+                    
+                    progressbar.type = "range"
+                    progressbar.value = 0
+                    progressbar.min = 0
+                    progressbar.max = audio.duration
+                    progressbar.oninput = function(){audio.currentTime =  progressbar.value}
                     songdiv.appendChild(songinfo)
                     songdiv.appendChild(audio)
                     songdiv.appendChild(durationtxt)
@@ -188,7 +197,7 @@
                 //document.body.(songdiv).(songinfo).(timer)
                 document.body.children[2].children[2].innerHTML = time
                 
-                //change progress bar
+                //change progress slider
                 document.body.children[3].children[0].value = audio.currentTime
             }
 
