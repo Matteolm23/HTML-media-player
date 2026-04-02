@@ -22,7 +22,7 @@
 
                 pindex = -1
                 playlist = []
-                allowed = /(\.ogg|\.mp3|\.wav)$/i;
+                allowed = /(\.ogg|\.mp3|\.wav|\.opus)$/i;
 
                 for(let i = 0; i < target.files.length; i++)
                 {
@@ -73,11 +73,8 @@
                     durationtxt.style.color = "aliceblue"
 
                     songinfo.style.color = "aliceblue"
-
-                    //custom progress bar
-                    //progressbar = Object.assign(document.createElement("input"), { className: "slider" })
                     
-                    //progressbar with progress tag
+                    //progressbar with slider
                     progressbardiv = document.createElement("div")
                     progressbar = document.createElement("input")
                     progressbar.value = 0
@@ -219,12 +216,15 @@
                 xdir = e.changedTouches[0].clientX - tsx;
                 ydir = e.changedTouches[0].clientY - tsy;
 
-                if(xdir < -150)
-                    goforward()
-                else if(xdir > 150)
-                    goback()
-                else if (xdir > -11 && xdir < 11 && ydir > -11 && ydir < 11)
-                    pausesong()
+                if (window.innerHeight*.7 > tsy)
+                {
+                    if(xdir < -150)
+                        goforward()
+                    else if(xdir > 150)
+                        goback()
+                    else if (xdir > -11 && xdir < 11 && ydir > -11 && ydir < 11)
+                        pausesong()
+                }
             })
 
         </script>
