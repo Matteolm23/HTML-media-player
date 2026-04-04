@@ -1,11 +1,18 @@
 <html>
     
-    <head><title>audioplayer</title></head>
+    <head>
+        <title>audioplayer</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
+        <style> 
+            body{font-family: "Jersey 10"} 
+            input[type=file]{color:transparent}
+        </style>
+    </head>
 
-    <body bgcolor="black">
+    <body>
 
         <div style="display: flex; justify-content: center; align-items: center; font-size: 200%;">
-            <label for="audio-upload" style="color: aliceblue;">Upload song folder: </label>
+            <label for="audio-upload">Upload song folder: </label>
         </div>
         <div style="display: flex; justify-content: center; align-items: center; margin-left: 185px;">
             <input id="audio-upload" type="file" webkitdirectory multiple/>
@@ -13,8 +20,15 @@
 
         <script>
 
+            let textcolor = "#CC1818"
+            let backgroundcolor = "#000000"
+            let barcolor = "#CC1818"
+
             let playlist = []
             let pindex = -1
+
+            document.body.style.color = textcolor
+            document.body.style.backgroundColor = backgroundcolor
 
             function createfilearray({target})
             {
@@ -70,9 +84,6 @@
                     durationtxt.style.position = "absolute"
                     durationtxt.style.bottom = "2%"
                     durationtxt.style.fontSize = "40px"
-                    durationtxt.style.color = "aliceblue"
-
-                    songinfo.style.color = "aliceblue"
                     
                     //progressbar with slider
                     progressbardiv = document.createElement("div")
@@ -80,6 +91,7 @@
                     progressbar.value = 0
                     progressbar.max = audio.duration
                     progressbar.min = 0
+                    progressbar.style.accentColor = barcolor
                     progressbar.style.width = "75%"
                     progressbar.style.height = "2rem"
                     progressbar.style.position = "absolute"
