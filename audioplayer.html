@@ -4,8 +4,42 @@
         <title>audioplayer</title>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
         <style> 
-            body{font-family: "Jersey 10"} 
+            body{font-family: "Jersey 10"}
             input[type=file]{color:transparent}
+            .slider
+            {
+                -webkit-appearance: none;
+                --pc: 0;
+                --color: #000000;
+                --bgcolor: transparent;
+                --border: #000000;
+                --outline_width: 4px;
+                --height: 12px;
+                --border_radius: 6px;
+                --dot_size: 20px;
+                height: var(--height);
+                background: linear-gradient(to right, transparent 0 var(--pc), var(--bgcolor) var(--pc) 100%), var(--color);
+                background-origin: content-box;
+                outline: solid;
+                outline-color: var(--border);
+                outline-width: var(--outline_width);
+                border-radius: var(--border_radius);
+                overflow: visible;
+            }
+
+            .slider::-webkit-slider-runnable-track {position: relative;}
+
+            .slider::-webkit-slider-thumb
+            {
+                -webkit-appearance: none;
+                border-radius: 50%;
+                width: var(--dot_size);
+                height: var(--dot_size);
+                outline: solid;
+                outline-color: var(--border);
+                outline-width: var(--outline_width);
+                background: var(--color);
+            }
         </style>
     </head>
 
@@ -19,10 +53,14 @@
         </div>
 
         <script>
+            if (document.body.clientHeight > document.body.clientWidth)
+                document.body.children[0].style.fontSize = "75px"
 
             let textcolor = "#CC1818"
             let backgroundcolor = "#000000"
             let barcolor = "#CC1818"
+            let barbgcolor = "#d3d3d3"
+            let barbordercolor = "#000000"
 
             let playlist = []
             let pindex = -1
@@ -73,7 +111,7 @@
                 songinfo.style.fontSize = "40px"
 
                 //song name
-                songinfo.appendChild(document.createTextNode(pindex + ". " + playlist[pindex].name.replace(/\.[^/\\.]+$/, "")))
+                songinfo.appendChild(document.createTextNode(playlist[pindex].name.replace(/\.[^/\\.]+$/, "")))
 
                 audio.onloadedmetadata = (event) => 
                 {   
@@ -88,20 +126,40 @@
                     //progressbar with slider
                     progressbardiv = document.createElement("div")
                     progressbar = document.createElement("input")
+                    progressbar.className = "slider"
                     progressbar.value = 0
                     progressbar.max = audio.duration
                     progressbar.min = 0
-                    progressbar.style.accentColor = barcolor
                     progressbar.style.width = "75%"
-                    progressbar.style.height = "2rem"
                     progressbar.style.position = "absolute"
-                    progressbar.style.bottom = "15%"
-                    
+                    progressbar.style.bottom = "16%"
                     progressbar.type = "range"
-                    progressbar.value = 0
-                    progressbar.min = 0
-                    progressbar.max = audio.duration
-                    progressbar.oninput = function(){audio.currentTime =  progressbar.value}
+
+                    if (document.body.clientHeight > document.body.clientWidth)
+                    {
+                        songinfo.style.fontSize = "60px"
+                        durationtxt.style.fontSize = "90px"
+                        progressbar.style.bottom = "17%" 
+                        songinfo.style.bottom = "17%"
+                        durationtxt.style.bottom = "3%"
+                        progressbar.style.setProperty('--outline_width', "5px")
+                        progressbar.style.setProperty('--height', "20px")
+                        progressbar.style.setProperty('--border_radius', "10px")
+                        progressbar.style.setProperty('--dot_size', "32px")
+                    }
+
+                    progressbar.style.setProperty('--color', barcolor)
+                    progressbar.style.setProperty('--bgcolor', barbgcolor)
+                    progressbar.style.setProperty('--border', barbordercolor)
+                    progressbar.oninput = function()
+                    {
+                        audio.currentTime =  progressbar.value
+                        
+                        pc = (progressbar.value - progressbar.min) / (progressbar.max - progressbar.min) * 100;
+                        if (pc < 20) {pc++}
+                        progressbar.style.setProperty('--pc', pc + '%');
+                    }
+
                     songdiv.appendChild(songinfo)
                     songdiv.appendChild(audio)
                     songdiv.appendChild(durationtxt)
@@ -207,7 +265,13 @@
                 document.body.children[2].children[2].innerHTML = time
                 
                 //change progress slider
+                slider = document.body.children[3].children[0]
+
                 document.body.children[3].children[0].value = audio.currentTime
+
+                pc = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+                if (pc < 20) {pc++}
+                slider.style.setProperty('--pc', pc + '%');
             }
 
             //update every 250ms
