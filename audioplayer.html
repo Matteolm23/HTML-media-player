@@ -5,7 +5,9 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
         <style> 
             body{font-family: "Jersey 10"}
+
             input[type=file]{color:transparent}
+
             .slider
             {
                 -webkit-appearance: none;
@@ -26,9 +28,7 @@
                 border-radius: var(--border_radius);
                 overflow: visible;
             }
-
             .slider::-webkit-slider-runnable-track {position: relative;}
-
             .slider::-webkit-slider-thumb
             {
                 -webkit-appearance: none;
@@ -40,6 +40,21 @@
                 outline-width: var(--outline_width);
                 background: var(--color);
             }
+
+            .ci
+            {
+                --size: 30;
+                --p: 4;
+                --w: 58;
+                --m: -29;
+                padding: 0 var(--size) 0 var(--size);
+            }
+            input.ci::-webkit-color-swatch-wrapper
+            {
+                padding: var(--p);
+                margin-left: var(--m);
+                width: var(--w);
+            }
         </style>
     </head>
 
@@ -50,6 +65,23 @@
         </div>
         <div style="display: flex; justify-content: center; align-items: center; margin-left: 185px;">
             <input id="audio-upload" type="file" webkitdirectory multiple/>
+        </div>
+        <table id="colortable">
+            <tr>
+                <th><p><label for="textcolor" id="l1">text</label></p></th>
+                <th><p><label for="barcolor" id="l2">bars</label></p></th>
+                <th><p><label for="barbgcolor" id="l3">bar bg</label></p></th>
+                <th><p><label for="bgcolor" id="l4">bg</label></p></th>
+            </tr>
+            <tr>
+                <td><input type="color" id="textcolor" class="ci"></td>
+                <td><input type="color" id="barcolor" class="ci"></td>
+                <td><input type="color" id="barbgcolor" class="ci"></td>
+                <td><input type="color" id="bgcolor" class="ci"></td>
+            </tr>
+        </table>
+        <div>
+            <input id="volumeslider" type="range" min="0" max="100" class="slider">
         </div>
 
         <script>
@@ -67,6 +99,96 @@
 
             document.body.style.color = textcolor
             document.body.style.backgroundColor = backgroundcolor
+
+            table = document.getElementById("colortable")
+
+            for(i = 0; i < 4; i++)
+                table.rows[0].cells[i].style.color = textcolor
+
+            colors = [document.getElementById("textcolor"),document.getElementById("barcolor"),document.getElementById("barbgcolor"),document.getElementById("bgcolor")]
+            labels =[document.getElementById("l1"),document.getElementById("l2"),document.getElementById("l3"),document.getElementById("l4")]
+
+            table.style.position = "absolute"
+            table.style.right = "10%"
+            table.style.bottom = "90%"
+
+            let audiobar = document.getElementById("volumeslider")
+
+            colors[0].value = textcolor
+            colors[0].oninput = function()
+            {
+                textcolor = colors[0].value
+                document.body.style.color = textcolor
+                for(i = 0; i < 4; i++)
+                    table.rows[0].cells[i].style.color = textcolor
+            }
+            colors[1].value = barcolor
+            colors[1].oninput = function()
+            {
+                barcolor = colors[1].value
+                audiobar.style.setProperty('--color', barcolor)
+                document.body.children[static_element_num+1].children[0].style.setProperty('--color', barcolor)
+            }
+            colors[2].value = barbgcolor
+            colors[2].oninput = function()
+            {
+                barbgcolor = colors[2].value
+                audiobar.style.setProperty('--bgcolor', barbgcolor)
+                document.body.children[static_element_num+1].children[0].style.setProperty('--bgcolor', barbgcolor)
+            }
+            colors[3].value = bgcolor
+            colors[3].oninput = function()
+            {
+                bgcolor = colors[3].value
+                barbordercolor = colors[3].value
+                document.body.style.backgroundColor = bgcolor
+                audiobar.style.setProperty('--border', barbordercolor)
+                document.body.children[static_element_num+1].children[0].style.setProperty('--border', barbordercolor)
+            }
+
+            audiobar.value = 50
+            audiobar.style.width = "15%"
+            audiobar.style.position = "absolute"
+            audiobar.style.bottom = "92%"
+            audiobar.style.right = "75%"
+            audiobar.type = "range"
+
+            audiobar.style.setProperty('--color', barcolor)
+            audiobar.style.setProperty('--bgcolor', barbgcolor)
+            audiobar.style.setProperty('--border', barbordercolor)
+            audiobar.style.setProperty('--pc', '50%')
+
+            audiobar.oninput = function(){
+                pc = (audiobar.value - audiobar.min) / (audiobar.max - audiobar.min) * 100;
+                audiobar.style.setProperty('--pc', pc + '%');
+                audio = document.body.children[static_element_num].children[1]
+                audio.volume = audiobar.value/100
+            }
+
+            if (document.body.clientHeight > document.body.clientWidth)
+            {
+                for(i = 0; i < 4; i++)
+                {
+                    colors[i].style.setProperty('--size',"45")
+                    colors[i].style.setProperty('--p',"4")
+                    colors[i].style.setProperty('--m',"-45")
+                    colors[i].style.setProperty('--w',"90")
+                    colors[i].style.height = 40
+
+                    labels[i].style.fontSize = 32
+                }
+                table.style.bottom = "84.5%"
+                table.style.right = "5%"
+                audiobar.style.bottom = "85%"
+                audiobar.style.width = "40%"
+                audiobar.style.right = "55%"
+                audiobar.style.setProperty('--outline_width', "5px")
+                audiobar.style.setProperty('--height', "20px")
+                audiobar.style.setProperty('--border_radius', "10px")
+                audiobar.style.setProperty('--dot_size', "32px")
+            }
+
+            let static_element_num = document.body.children.length
 
             function createfilearray({target})
             {
@@ -91,7 +213,7 @@
 
                 urlObj = URL.createObjectURL(playlist[pindex]);
 
-                while (document.body.children.length > 2) 
+                while (document.body.children.length > static_element_num) 
                     document.body.removeChild(document.body.lastChild);
 
                 let songdiv = document.createElement("div")
@@ -103,6 +225,8 @@
 
                 //Set the src and start loading the audio from the file
                 audio.src = urlObj;
+
+                audio.volume = audiobar.value/100
 
                 //song info
                 let songinfo = document.createElement("p");
@@ -187,7 +311,7 @@
 
                 while (currentIndex != 0) 
                 {
-                    let randomIndex = Math.floor(Math.random() * currentIndex);
+                    let randomIndex = Math.floor(rand(0,currentIndex-1));
                     currentIndex--;
 
                     [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
@@ -199,6 +323,10 @@
                 s = num + '';
                 while (s.length < size) {s = '0' + s;}
                 return s;
+            }
+
+            function rand(min, max){
+                return (Math.floor(Math.pow(10,14)*Math.random()*Math.random())%(max-min+1))+min;
             }
 
             document.addEventListener("change", createfilearray)
@@ -220,7 +348,7 @@
             
             function pausesong()
             {
-                audio = document.body.children[2].children[1]
+                audio = document.body.children[static_element_num].children[1]
 
                 if(!audio.paused)
                     audio.pause()
@@ -253,7 +381,7 @@
             function updatetimer()
             {
                 //document.body.(songdiv).(audio)
-                audio = document.body.children[2].children[1]
+                audio = document.body.children[static_element_num].children[1]
                 time = audio.duration - audio.currentTime
 
                 if (time <= 0)
@@ -262,12 +390,12 @@
                 time = pad(Math.floor(time / 60),2) + ":" + pad(Math.floor(time % 60),2)
 
                 //document.body.(songdiv).(songinfo).(timer)
-                document.body.children[2].children[2].innerHTML = time
+                document.body.children[static_element_num].children[2].innerHTML = time
                 
                 //change progress slider
-                slider = document.body.children[3].children[0]
+                slider = document.body.children[static_element_num+1].children[0]
 
-                document.body.children[3].children[0].value = audio.currentTime
+                document.body.children[static_element_num+1].children[0].value = audio.currentTime
 
                 pc = (slider.value - slider.min) / (slider.max - slider.min) * 100;
                 if (pc < 20) {pc++}
@@ -292,7 +420,7 @@
                 xdir = e.changedTouches[0].clientX - tsx;
                 ydir = e.changedTouches[0].clientY - tsy;
 
-                if (window.innerHeight*.7 > tsy)
+                if (window.innerHeight*.7 > tsy && window.innerHeight*.2 < tsy)
                 {
                     if(xdir < -150)
                         goforward()
